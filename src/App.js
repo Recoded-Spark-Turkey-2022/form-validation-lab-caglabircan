@@ -1,14 +1,79 @@
 import './App.css';
 import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+//import { yupResolver } from '@hookform/resolvers/yup'
+import * as Yup from 'yup'
+
 
 function App() {
-  const [firstName, setFirstName] = useState("");
+  /* const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState(""); */
+/*   const { register, formState: { errors }, handleSubmit } = useForm();
+  const onSubmit = (data) => console.log(data); */
+
+  const formSchema = Yup.object().shape({
+    password: Yup.string()
+      .required('Password is mendatory')
+      .min(3, 'Password must be at 3 char long'),
+    confirmPwd: Yup.string()
+      .required('Password is mendatory')
+      .oneOf([Yup.ref('password')], 'Passwords does not match'),
+  })
+  const formOptions = { resolver: yupResolver(formSchema) }
+  const { register, handleSubmit, reset, formState } = useForm(formOptions)
+  const { errors } = formState
+  function onSubmit(data) {
+    console.log(JSON.stringify(data, null, 4))
+    return false
+
 
   return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <input 
+        {...register("firstName", { required: true })} 
+        aria-invalid={errors.firstName ? "true" : "false"} 
+      />
+      {errors.firstName?.type === 'required' && <p role="alert">First name is required</p>}
+
+      <input 
+        {...register("lastName", { required: true })} 
+        aria-invalid={errors.lastName ? "true" : "false"} 
+      />
+      {errors.lastName?.type === 'required' && <p role="alert">Last name is required</p>}
+
+      <input type="number"
+        {...register("phoneNumber", { required: true })} 
+        aria-invalid={errors.phoneNumber ? "true" : "false"} 
+      />
+      {errors.phoneNumber?.type === 'required' && <p role="alert">Phone number is required</p>}
+
+      <input 
+        {...register("mail", { required: "Email Address is required" })} 
+        aria-invalid={errors.mail ? "true" : "false"} 
+      />
+      {errors.mail && <p role="alert">{errors.mail?.message}</p>}
+
+      <input type="password"
+        {...register("password", { required: true })} 
+        aria-invalid={errors.password ? "true" : "false"} 
+      />
+      {errors.password?.type === 'required' && <p role="alert">Password is required</p>}
+
+      <input
+            name="confirmPwd"
+            type="password"
+            {...register('confirmPwd')}
+            className={`form-control ${errors.confirmPwd ? 'is-invalid' : ''}`}
+          />
+      
+      <input type="submit" />
+    </form>
+  );
+
+ /*  return (
     <form>
       <input
         value={firstName}
@@ -54,7 +119,7 @@ function App() {
       />
       <button type="submit">Submit</button>
     </form>
-  );
+  ); */
 }
 export default App;
 
